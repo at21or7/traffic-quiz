@@ -24,10 +24,16 @@ button{
   padding:12px 25px;
   font-size:18px;
   cursor:pointer;
-  margin-right:10px;
+  margin:10px 10px 0 0;
 }
 .correct{color:green;font-weight:bold;}
 .wrong{color:red;font-weight:bold;}
+.review{
+  margin-top:15px;
+  padding:10px;
+  border:1px solid #ccc;
+  background:#f9f9f9;
+}
 </style>
 </head>
 
@@ -43,80 +49,102 @@ button{
 <script>
 const PASS_LINE = 45;
 
-// ===== 問題（50問）=====
+// ===== 問題50問 =====
 let questions = [
- {q:"二輪車は制限速度を守らなければならない。",a:true},
- {q:"踏切では一時停止しなくてもよい。",a:false},
- {q:"赤信号では必ず停止する。",a:true},
- {q:"横断歩道では歩行者が優先である。",a:true},
- {q:"夜間は前照灯を点灯しなくてもよい。",a:false},
- {q:"一時停止標識では完全に停止する。",a:true},
- {q:"雨天時は制動距離が短くなる。",a:false},
- {q:"二輪車は急制動しても転倒しない。",a:false},
- {q:"カーブの手前では減速する。",a:true},
- {q:"進路変更時は合図を出す。",a:true}
+{q:"二輪車は法定速度を超えて走行してはならない。",a:true,exp:"二輪車も自動車と同様に法定・指定速度を守る義務があります。"},
+{q:"踏切では徐行すれば一時停止しなくてもよい。",a:false,exp:"踏切では必ず一時停止し、安全確認を行います。"},
+{q:"赤信号では停止線の手前で停止する。",a:true,exp:"赤信号では停止線の直前で確実に停止します。"},
+{q:"横断歩道では歩行者が優先である。",a:true,exp:"横断歩道では歩行者が最優先されます。"},
+{q:"夜間は前照灯を点灯しなければならない。",a:true,exp:"夜間は前照灯の点灯が義務です。"},
+{q:"一時停止標識では徐行で通過してよい。",a:false,exp:"一時停止標識では完全に停止しなければなりません。"},
+{q:"雨の日は制動距離が長くなる。",a:true,exp:"路面が滑りやすくなり制動距離は長くなります。"},
+{q:"二輪車は急制動しても転倒の危険はない。",a:false,exp:"急制動は転倒の危険が高くなります。"},
+{q:"カーブでは車体を傾けて走行する。",a:true,exp:"二輪車はカーブで車体を傾けてバランスを取ります。"},
+{q:"進路変更時は合図を出す義務がある。",a:true,exp:"進路変更の合図は道路交通法で義務付けられています。"},
+
+{q:"交差点では安全確認が最も重要である。",a:true,exp:"事故防止のため安全確認は最優先です。"},
+{q:"歩行者用信号が青でも車両は進行できる。",a:false,exp:"歩行者用信号と車両用信号は別です。"},
+{q:"追い越しは安全が確認できれば可能である。",a:true,exp:"追い越しは法令を守り安全確認が必要です。"},
+{q:"交差点内での追い越しは原則禁止である。",a:true,exp:"交差点内での追い越しは禁止されています。"},
+{q:"二輪車はすり抜け走行が常に許されている。",a:false,exp:"すり抜けは状況により危険・違反となります。"},
+{q:"合図は行動の3秒前に出す。",a:true,exp:"合図は原則として行動の3秒前に出します。"},
+{q:"後続車が近い場合は急停止してもよい。",a:false,exp:"急停止は追突事故の原因になります。"},
+{q:"カーブ中での急加速は危険である。",a:true,exp:"急加速は転倒の危険があります。"},
+{q:"下り坂では制動距離が長くなる。",a:true,exp:"下り坂では制動距離が延びやすくなります。"},
+{q:"ヘルメットはあごひもを締めなくてもよい。",a:false,exp:"ヘルメットは正しく着用する必要があります。"},
+
+{q:"見通しの悪い交差点では徐行する。",a:true,exp:"徐行して安全確認を行います。"},
+{q:"夜間は昼間より発見されやすい。",a:false,exp:"夜間は視認性が低下します。"},
+{q:"前方車両との車間距離は十分に取る。",a:true,exp:"追突防止のため十分な車間距離が必要です。"},
+{q:"横風が強いとバランスを崩しやすい。",a:true,exp:"二輪車は横風の影響を受けやすいです。"},
+{q:"雨の日はマンホールが滑りやすい。",a:true,exp:"金属部分は特に滑りやすくなります。"},
+{q:"合図は早すぎても問題ない。",a:false,exp:"早すぎる合図は誤解を招きます。"},
+{q:"追い越される時は進路を譲る。",a:true,exp:"安全確保のため進路を譲ります。"},
+{q:"二輪車は四輪車より停止距離が短い。",a:false,exp:"路面状況により必ずしも短くなりません。"},
+{q:"踏切内での変速は避ける。",a:true,exp:"踏切内ではエンスト防止が重要です。"},
+{q:"夜間は速度を控えめにする。",a:true,exp:"視界が悪くなるため速度を落とします。"},
+
+{q:"急ハンドルは転倒の原因になる。",a:true,exp:"急な操作はバランスを崩します。"},
+{q:"交差点では右折車に注意する。",a:true,exp:"右直事故防止のためです。"},
+{q:"雨天時は白線上でも安全である。",a:false,exp:"白線は滑りやすく危険です。"},
+{q:"ブレーキは前後同時に使う。",a:true,exp:"安定した制動ができます。"},
+{q:"見通しの良い直線ではスピードを出してよい。",a:false,exp:"法定速度を守る必要があります。"},
+{q:"渋滞中は安全確認を省略してよい。",a:false,exp:"渋滞中でも安全確認は必要です。"},
+{q:"夜間は対向車のライトに注意する。",a:true,exp:"幻惑防止のため注意が必要です。"},
+{q:"エンジンブレーキは有効である。",a:true,exp:"減速時に安定性を高めます。"},
+{q:"二輪車は常に危険予測が重要である。",a:true,exp:"事故防止の基本です。"},
+{q:"交通ルールは状況により守らなくてよい。",a:false,exp:"交通ルールは必ず守らなければなりません。"}
 ];
 
-// 50問になるまで自動補完（安全）
-while(questions.length < 50){
-  questions.push({
-    q:"安全確認を怠って運転してもよい。",
-    a:false
-  });
-}
-
-let baseQuestions = [...questions];
-let current = 0;
-let score = 0;
-let wrongList = [];
-let retryMode = false;
+let current=0, score=0, wrongList=[], retryMode=false;
 
 // ===== 表示 =====
 function showQuestion(){
-  const q = questions[current];
-  document.getElementById("container").innerHTML = `
-    <h3>第 ${current+1} 問 / ${questions.length}</h3>
+  const q=questions[current];
+  container.innerHTML=`
+    <h3>第${current+1}問 / ${questions.length}</h3>
     <p>${q.q}</p>
     <button onclick="answer(true)">○</button>
-    <button onclick="answer(false)">×</button>
-  `;
+    <button onclick="answer(false)">×</button>`;
 }
 
+// ===== 判定 =====
 function answer(user){
-  if(user === questions[current].a){
-    score++;
-  }else{
-    wrongList.push(questions[current]);
-  }
+  if(user===questions[current].a){score++}
+  else{wrongList.push(questions[current])}
   current++;
-  current < questions.length ? showQuestion() : showResult();
+  current<questions.length?showQuestion():showResult();
 }
 
 // ===== 結果 =====
 function showResult(){
-  let html = `<h2>結果</h2>
-    <p>${score} / ${questions.length}</p>`;
-
-  if(!retryMode && score >= PASS_LINE){
-    html += `<p class="correct">合格です</p>`;
+  let html=`<h2>結果</h2><p>${score}/${questions.length}</p>`;
+  if(!retryMode && score>=PASS_LINE){
+    html+=`<p class="correct">合格です</p>`;
   }else{
-    html += `<p class="wrong">不合格です（再学習を行ってください）</p>
-             <button onclick="retry()">再学習開始</button>`;
+    html+=`<p class="wrong">不合格です（再学習を行ってください）</p>
+           <button onclick="retry()">再学習開始</button>`;
   }
-  document.getElementById("container").innerHTML = html;
+  if(wrongList.length){
+    html+=`<h3>間違えた問題の解説</h3>`;
+    wrongList.forEach((q,i)=>{
+      html+=`<div class="review">
+        <strong>問${i+1}</strong> ${q.q}<br>
+        <strong>解説：</strong>${q.exp}
+      </div>`;
+    });
+  }
+  container.innerHTML=html;
 }
 
 // ===== 再学習 =====
 function retry(){
-  questions = [...wrongList];
-  wrongList = [];
-  score = 0;
-  current = 0;
-  retryMode = true;
+  questions=[...wrongList];
+  wrongList=[]; score=0; current=0; retryMode=true;
   showQuestion();
 }
 
-// 初期表示
+const container=document.getElementById("container");
 showQuestion();
 </script>
 
