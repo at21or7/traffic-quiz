@@ -3,44 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <title>交通法規 模擬テスト（50問）</title>
+
 <style>
 body{
   font-family: "メイリオ", sans-serif;
   background:#eef2f5;
 }
-<body>
 
-<h1 style="text-align:center; margin-bottom:10px;">
-  村上中央自動車学校　学科問題（二輪車）
-</h1>
-
-<p style="text-align:center; color:#555; margin-top:0;">
-  この問題は本免試験を想定した練習問題です
-</p>
-
-<!-- ↓ ここから下に今までのテスト画面コードが続く -->
-
-</body>
-
-  #container{
+#container{
   max-width:900px;
   margin:30px auto;
   background:#fff;
   border:2px solid #003366;
   padding:25px;
 }
+
 h1{
   text-align:center;
   color:#003366;
 }
+
 button{
-  font-size:18px;
-  padding:12px 25px;
-  margin:10px 10px 0 0;
+  padding:10px 20px;
+  font-size:16px;
+  margin-top:15px;
   cursor:pointer;
 }
+
 .correct{ color:green; font-weight:bold; }
 .wrong{ color:red; font-weight:bold; }
+
 .review{
   margin-top:25px;
   border-top:1px solid #ccc;
@@ -50,6 +42,12 @@ button{
 </head>
 
 <body>
+
+<h1>村上中央自動車学校　学科問題（二輪車）</h1>
+<p style="text-align:center;color:#555;">
+本免試験を想定した学科模擬テスト（全50問）
+</p>
+
 <div id="container"></div>
 
 <script>
@@ -59,96 +57,94 @@ let score = 0;
 let wrongList = [];
 
 const questions = [
-{q:"信号機のない横断歩道では、歩行者がいる場合は必ず一時停止しなければならない。",a:true},
-{q:"黄色信号は進んでもよい合図である。",a:false},
-{q:"一時停止標識がある場所では、完全に停止しなければならない。",a:true},
-{q:"交差点内では追い越しをしてもよい。",a:false},
-{q:"夜間、前照灯は対向車がいない場合は上向きが原則である。",a:true},
-{q:"制限速度は天候に関係なく必ず守ればよい。",a:false},
-{q:"横断歩道付近では追い越しは禁止されている。",a:true},
-{q:"踏切では必ず一時停止し、安全確認を行う。",a:true},
-{q:"徐行とは、すぐに停止できる速度で進行することである。",a:true},
-{q:"進路変更は合図を出せばすぐに行ってよい。",a:false},
-
-{q:"普通道路の最高速度は原則60km/hである。",a:true},
-{q:"右折時は対向車より先に曲がるのが原則である。",a:false},
-{q:"歩行者用信号が赤でも歩行者がいなければ進行できる。",a:false},
-{q:"急ブレーキ時はハザードランプを使用する。",a:false},
-{q:"道路外へ出るときは歩行者を優先しなければならない。",a:true},
-{q:"警音器は危険防止のためやむを得ない場合に使用する。",a:true},
-{q:"車両は道路の中央から左側部分を通行する。",a:true},
-{q:"見通しの悪い交差点では徐行する。",a:true},
-{q:"進行方向別通行区分がある場合はそれに従う。",a:true},
-{q:"歩行者が横断中でも青信号なら進行できる。",a:false},
-
-{q:"駐停車禁止場所では運転者がいれば停車できる。",a:false},
-{q:"安全地帯がある場合、歩行者はそこを通行する。",a:true},
-{q:"工事現場の誘導員の指示には従う。",a:true},
-{q:"環状交差点では右から来る車が優先である。",a:false},
-{q:"横断歩道の手前30m以内は追い越し禁止である。",a:true},
-{q:"信号のない交差点では左方優先が原則である。",a:true},
-{q:"二段階右折はすべての二輪車が行う。",a:false},
-{q:"下り坂ではエンジンブレーキを活用する。",a:true},
-{q:"標識と信号が異なる場合は信号に従う。",a:true},
-{q:"夜間は昼間より停止距離が短い。",a:false},
-
-{q:"交差点内でのUターンは原則禁止である。",a:false},
-{q:"歩行者専用道路は車両通行禁止である。",a:true},
-{q:"追い越し禁止場所では追い抜きも禁止される。",a:false},
-{q:"速度制限標識がある場合はそれに従う。",a:true},
-{q:"合図は行為の直前に出せばよい。",a:false},
-{q:"踏切内でエンストした場合は脱出を最優先する。",a:true},
-{q:"左折時はあらかじめ道路の左端に寄る。",a:true},
-{q:"普通自転車は軽車両である。",a:true},
-{q:"優先道路であっても状況により徐行が必要な場合がある。",a:true},
-{q:"見通しの悪いカーブでは対向車に注意して進行する。",a:true}
+  {q:"車は歩行者が横断歩道を渡ろうとしているときは停止しなければならない。",a:true,e:"横断歩道では歩行者最優先です。"},
+  {q:"黄色信号は進んでもよい合図である。",a:false,e:"黄色信号は『止まれ』の予告です。"},
+  {q:"二輪車も追い越しの際は進路変更前に合図を出す必要がある。",a:true,e:"すべての車両で必要です。"},
+  {q:"交差点では徐行の義務はない。",a:false,e:"見通しの悪い交差点では徐行義務があります。"},
+  {q:"一時停止標識がある場所では必ず停止線で止まる。",a:true,e:"停止線があればそこで停止します。"},
+  {q:"雨天時は制動距離が短くなる。",a:false,e:"雨天時は制動距離が長くなります。"},
+  {q:"踏切では必ず一時停止し安全確認を行う。",a:true,e:"二輪車も例外ではありません。"},
+  {q:"制限速度は標識がなければ法定速度に従う。",a:true,e:"標識がなければ法定速度です。"},
+  {q:"右折時は直進車より優先される。",a:false,e:"直進車が優先です。"},
+  {q:"夜間は前照灯を点灯しなければならない。",a:true,e:"夜間は必須です。"},
+  {q:"見通しの悪いカーブでは警音器を鳴らすことがある。",a:true,e:"必要に応じて使用します。"},
+  {q:"二輪車は車道の中央を走らなければならない。",a:false,e:"原則は左側端です。"},
+  {q:"歩行者用信号が赤でも車両用が青なら進める。",a:true,e:"車両用信号に従います。"},
+  {q:"交差点内での追い越しは禁止されている。",a:true,e:"原則禁止です。"},
+  {q:"進路変更の合図は変更する3秒前に出す。",a:true,e:"原則3秒前です。"},
+  {q:"二輪車は高速道路を走行できない。",a:false,e:"条件を満たせば走行可能です。"},
+  {q:"後退時は後方確認をしなくてよい。",a:false,e:"必ず後方確認が必要です。"},
+  {q:"制限速度を守っていれば安全確認は不要。",a:false,e:"安全確認は常に必要です。"},
+  {q:"酒気帯び運転は禁止されている。",a:true,e:"少量でも禁止です。"},
+  {q:"二輪車は傘を差して運転してよい。",a:false,e:"片手運転は禁止です。"},
+  {q:"横断歩道付近では追い越し禁止である。",a:true,e:"歩行者保護のためです。"},
+  {q:"警察官の手信号は信号機より優先される。",a:true,e:"警察官の指示が最優先です。"},
+  {q:"夜間は速度を上げたほうが安全である。",a:false,e:"夜間は慎重な運転が必要です。"},
+  {q:"交差点でのUターンは禁止されている場合がある。",a:true,e:"標識等で禁止されることがあります。"},
+  {q:"二輪車は歩道を通行できる。",a:false,e:"原則通行不可です。"},
+  {q:"制動距離は速度が上がると長くなる。",a:true,e:"速度に比例して伸びます。"},
+  {q:"追い越し時は右側から行う。",a:true,e:"原則右側です。"},
+  {q:"信号のない横断歩道では歩行者が優先。",a:true,e:"信号がなくても同じです。"},
+  {q:"エンジンブレーキは使ってはいけない。",a:false,e:"積極的に使います。"},
+  {q:"雨天時はマンホールの上で滑りやすい。",a:true,e:"特に注意が必要です。"},
+  {q:"二輪車の二人乗りは禁止されている。",a:false,e:"条件を満たせば可能です。"},
+  {q:"安全確認は目視で行うことが重要である。",a:true,e:"ミラーだけでは不十分です。"},
+  {q:"交差点での徐行は義務である場合がある。",a:true,e:"見通しが悪い場合などです。"},
+  {q:"ブレーキは前後同時に使う。",a:true,e:"安定した制動になります。"},
+  {q:"夜間は対向車がいてもハイビームを使う。",a:false,e:"切り替えが必要です。"},
+  {q:"合図を出せば必ず進路変更できる。",a:false,e:"安全確認が前提です。"},
+  {q:"制限速度は最高速度を示している。",a:true,e:"超えてはいけません。"},
+  {q:"二輪車もシートベルトを着用する。",a:false,e:"ヘルメット着用義務です。"},
+  {q:"見通しの良い直線では追い越し禁止でない。",a:true,e:"標識がなければ可能です。"},
+  {q:"疲労時は運転を控えるべきである。",a:true,e:"事故防止の基本です。"},
+  {q:"二輪車は車の左側をすり抜けてよい。",a:false,e:"危険行為です。"},
+  {q:"信号待ち中でも安全確認は必要。",a:true,e:"周囲確認は常に必要です。"},
+  {q:"法定速度は道路種別により異なる。",a:true,e:"一般道・高速で異なります。"},
+  {q:"運転中の携帯電話操作は禁止。",a:true,e:"重大な違反です。"},
+  {q:"周囲の交通状況に応じた運転が必要。",a:true,e:"基本中の基本です。"}
 ];
 
 function showQuestion(){
   const q = questions[current];
-  document.getElementById("container").innerHTML = `
-    <h1>交通法規 模擬テスト</h1>
-    <h2>問題 ${current+1} / 50</h2>
+  container.innerHTML = `
+    <p>【第 ${current+1} 問】</p>
     <p>${q.q}</p>
-    <button id="yes">〇</button>
-    <button id="no">×</button>
+    <button onclick="answer(true)">○</button>
+    <button onclick="answer(false)">×</button>
   `;
-  document.getElementById("yes").onclick = ()=>answer(true);
-  document.getElementById("no").onclick = ()=>answer(false);
 }
 
 function answer(val){
-  if(val === questions[current].a){
+  const q = questions[current];
+  if(val === q.a){
     score++;
   }else{
-    wrongList.push(questions[current]);
+    wrongList.push({q:q.q,e:q.e});
   }
   current++;
   current < questions.length ? showQuestion() : showResult();
 }
 
 function showResult(){
-  let pass = score >= PASS_LINE;
-  let html = `
-    <h1>結果発表</h1>
-    <p>正解数：${score} / 50</p>
-    <p class="${pass?'correct':'wrong'}">
-      ${pass ? '合格（45点以上）' : '不合格'}
-    </p>
-  `;
+  let html = `<h2>結果</h2>
+  <p>得点：${score} / 50</p>`;
+
+  html += score >= PASS_LINE
+    ? `<p class="correct">合格（当校基準達成）</p>`
+    : `<p class="wrong">不合格（再学習してください）</p>`;
+
   if(wrongList.length){
-    html += `<div class="review"><h2>復習（間違えた問題）</h2>`;
-    wrongList.forEach((q,i)=>{
-      html += `<p>${i+1}. ${q.q}<br>正解：${q.a?'〇':'×'}</p>`;
+    html += `<div class="review"><h3>復習</h3>`;
+    wrongList.forEach(w=>{
+      html += `<p>❌ ${w.q}<br>解説：${w.e}</p>`;
     });
     html += `</div>`;
   }
-  document.getElementById("container").innerHTML = html;
+  container.innerHTML = html;
 }
 
 showQuestion();
 </script>
+
 </body>
 </html>
-
-
