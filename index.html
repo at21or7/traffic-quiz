@@ -6,9 +6,10 @@
 
 <style>
 body{
-  font-family:"メイリオ",sans-serif;
+  font-family: "メイリオ", sans-serif;
   background:#eef2f5;
 }
+
 #container{
   max-width:900px;
   margin:30px auto;
@@ -16,20 +17,26 @@ body{
   border:2px solid #003366;
   padding:25px;
 }
-h1{text-align:center;color:#003366;}
+
+h1{
+  text-align:center;
+  color:#003366;
+}
+
 button{
-  padding:12px 25px;
-  font-size:18px;
-  margin:10px 10px 0 0;
+  padding:10px 20px;
+  font-size:16px;
+  margin-top:15px;
   cursor:pointer;
 }
-.correct{color:green;font-weight:bold;}
-.wrong{color:red;font-weight:bold;}
+
+.correct{ color:green; font-weight:bold; }
+.wrong{ color:red; font-weight:bold; }
+
 .review{
-  margin-top:10px;
-  padding:10px;
-  border:1px solid #ccc;
-  background:#f9f9f9;
+  margin-top:25px;
+  border-top:1px solid #ccc;
+  padding-top:15px;
 }
 </style>
 </head>
@@ -38,109 +45,104 @@ button{
 
 <h1>村上中央自動車学校　学科問題（二輪車）</h1>
 <p style="text-align:center;color:#555;">
-本免試験を想定した効果測定形式の模擬テストです
+本免試験を想定した学科模擬テスト（全50問）
 </p>
 
 <div id="container"></div>
 
 <script>
-/* ===== 初期設定 ===== */
 const PASS_LINE = 45;
-const container = document.getElementById("container");
-
-/* ===== 問題50問 ===== */
-let baseQuestions = [
- {q:"二輪車は法定速度を守らなければならない。",a:true,exp:"二輪車も法定・指定速度を守る義務があります。"},
- {q:"踏切では徐行すれば一時停止しなくてもよい。",a:false,exp:"踏切では必ず一時停止し安全確認を行います。"},
- {q:"赤信号では停止線の手前で停止する。",a:true,exp:"赤信号では停止線の直前で停止します。"},
- {q:"横断歩道では歩行者が優先である。",a:true,exp:"横断歩道では歩行者優先です。"},
- {q:"夜間は前照灯を点灯しなくてもよい。",a:false,exp:"夜間は前照灯の点灯が義務です。"},
- {q:"一時停止標識では完全に停止する。",a:true,exp:"停止線の直前で完全停止します。"},
- {q:"雨天時は制動距離が長くなる。",a:true,exp:"路面が滑りやすくなるためです。"},
- {q:"急制動は転倒の原因になる。",a:true,exp:"急な操作はバランスを崩します。"},
- {q:"カーブ手前では減速する。",a:true,exp:"安定して走行するためです。"},
- {q:"進路変更時は合図を出す。",a:true,exp:"合図は義務です。"}
-];
-
-/* 50問に補完（内容は後で差し替え可能） */
-while(baseQuestions.length < 50){
-  baseQuestions.push({
-    q:"安全確認を怠って運転してもよい。",
-    a:false,
-    exp:"安全確認はすべての運転の基本です。"
-  });
-}
-
-/* ===== 状態管理 ===== */
-let questions = [...baseQuestions];
 let current = 0;
 let score = 0;
 let wrongList = [];
-let reviewList = [];
-let retryMode = false;
 
-/* ===== 問題表示 ===== */
+const questions = [
+  {q:"車は歩行者が横断歩道を渡ろうとしているときは停止しなければならない。",a:true,e:"横断歩道では歩行者最優先です。"},
+  {q:"黄色信号は進んでもよい合図である。",a:false,e:"黄色信号は『止まれ』の予告です。"},
+  {q:"二輪車も追い越しの際は進路変更前に合図を出す必要がある。",a:true,e:"すべての車両で必要です。"},
+  {q:"交差点では徐行の義務はない。",a:false,e:"見通しの悪い交差点では徐行義務があります。"},
+  {q:"一時停止標識がある場所では必ず停止線で止まる。",a:true,e:"停止線があればそこで停止します。"},
+  {q:"雨天時は制動距離が短くなる。",a:false,e:"雨天時は制動距離が長くなります。"},
+  {q:"踏切では必ず一時停止し安全確認を行う。",a:true,e:"二輪車も例外ではありません。"},
+  {q:"制限速度は標識がなければ法定速度に従う。",a:true,e:"標識がなければ法定速度です。"},
+  {q:"右折時は直進車より優先される。",a:false,e:"直進車が優先です。"},
+  {q:"夜間は前照灯を点灯しなければならない。",a:true,e:"夜間は必須です。"},
+  {q:"見通しの悪いカーブでは警音器を鳴らすことがある。",a:true,e:"必要に応じて使用します。"},
+  {q:"二輪車は車道の中央を走らなければならない。",a:false,e:"原則は左側端です。"},
+  {q:"歩行者用信号が赤でも車両用が青なら進める。",a:true,e:"車両用信号に従います。"},
+  {q:"交差点内での追い越しは禁止されている。",a:true,e:"原則禁止です。"},
+  {q:"進路変更の合図は変更する3秒前に出す。",a:true,e:"原則3秒前です。"},
+  {q:"二輪車は高速道路を走行できない。",a:false,e:"条件を満たせば走行可能です。"},
+  {q:"後退時は後方確認をしなくてよい。",a:false,e:"必ず後方確認が必要です。"},
+  {q:"制限速度を守っていれば安全確認は不要。",a:false,e:"安全確認は常に必要です。"},
+  {q:"酒気帯び運転は禁止されている。",a:true,e:"少量でも禁止です。"},
+  {q:"二輪車は傘を差して運転してよい。",a:false,e:"片手運転は禁止です。"},
+  {q:"横断歩道付近では追い越し禁止である。",a:true,e:"歩行者保護のためです。"},
+  {q:"警察官の手信号は信号機より優先される。",a:true,e:"警察官の指示が最優先です。"},
+  {q:"夜間は速度を上げたほうが安全である。",a:false,e:"夜間は慎重な運転が必要です。"},
+  {q:"交差点でのUターンは禁止されている場合がある。",a:true,e:"標識等で禁止されることがあります。"},
+  {q:"二輪車は歩道を通行できる。",a:false,e:"原則通行不可です。"},
+  {q:"制動距離は速度が上がると長くなる。",a:true,e:"速度に比例して伸びます。"},
+  {q:"追い越し時は右側から行う。",a:true,e:"原則右側です。"},
+  {q:"信号のない横断歩道では歩行者が優先。",a:true,e:"信号がなくても同じです。"},
+  {q:"エンジンブレーキは使ってはいけない。",a:false,e:"積極的に使います。"},
+  {q:"雨天時はマンホールの上で滑りやすい。",a:true,e:"特に注意が必要です。"},
+  {q:"二輪車の二人乗りは禁止されている。",a:false,e:"条件を満たせば可能です。"},
+  {q:"安全確認は目視で行うことが重要である。",a:true,e:"ミラーだけでは不十分です。"},
+  {q:"交差点での徐行は義務である場合がある。",a:true,e:"見通しが悪い場合などです。"},
+  {q:"ブレーキは前後同時に使う。",a:true,e:"安定した制動になります。"},
+  {q:"夜間は対向車がいてもハイビームを使う。",a:false,e:"切り替えが必要です。"},
+  {q:"合図を出せば必ず進路変更できる。",a:false,e:"安全確認が前提です。"},
+  {q:"制限速度は最高速度を示している。",a:true,e:"超えてはいけません。"},
+  {q:"二輪車もシートベルトを着用する。",a:false,e:"ヘルメット着用義務です。"},
+  {q:"見通しの良い直線では追い越し禁止でない。",a:true,e:"標識がなければ可能です。"},
+  {q:"疲労時は運転を控えるべきである。",a:true,e:"事故防止の基本です。"},
+  {q:"二輪車は車の左側をすり抜けてよい。",a:false,e:"危険行為です。"},
+  {q:"信号待ち中でも安全確認は必要。",a:true,e:"周囲確認は常に必要です。"},
+  {q:"法定速度は道路種別により異なる。",a:true,e:"一般道・高速で異なります。"},
+  {q:"運転中の携帯電話操作は禁止。",a:true,e:"重大な違反です。"},
+  {q:"周囲の交通状況に応じた運転が必要。",a:true,e:"基本中の基本です。"}
+];
+
 function showQuestion(){
   const q = questions[current];
   container.innerHTML = `
-    <h3>第 ${current+1} 問 / ${questions.length}</h3>
+    <p>【第 ${current+1} 問】</p>
     <p>${q.q}</p>
     <button onclick="answer(true)">○</button>
     <button onclick="answer(false)">×</button>
   `;
 }
 
-/* ===== 回答処理 ===== */
-function answer(user){
-  if(user === questions[current].a){
+function answer(val){
+  const q = questions[current];
+  if(val === q.a){
     score++;
   }else{
-    wrongList.push(questions[current]);
-    reviewList.push(questions[current]);
+    wrongList.push({q:q.q,e:q.e});
   }
   current++;
   current < questions.length ? showQuestion() : showResult();
 }
 
-/* ===== 結果表示 ===== */
 function showResult(){
-  let html = `
-    <h2>結果</h2>
-    <p>${score} / ${questions.length}</p>
-  `;
+  let html = `<h2>結果</h2>
+  <p>得点：${score} / 50</p>`;
 
-  if(!retryMode && score >= PASS_LINE){
-    html += `<p class="correct">合格です</p>`;
-  }else{
-    html += `<p class="wrong">不合格です（再学習が必要です）</p>
-             <button onclick="retry()">再学習開始</button>`;
-  }
+  html += score >= PASS_LINE
+    ? `<p class="correct">合格（当校基準達成）</p>`
+    : `<p class="wrong">不合格（再学習してください）</p>`;
 
-  if(reviewList.length > 0){
-    html += `<h3>間違えた問題の解説</h3>`;
-    reviewList.forEach((q,i)=>{
-      html += `
-        <div class="review">
-          <strong>問${i+1}</strong> ${q.q}<br>
-          <strong>解説：</strong>${q.exp}
-        </div>`;
+  if(wrongList.length){
+    html += `<div class="review"><h3>復習</h3>`;
+    wrongList.forEach(w=>{
+      html += `<p>❌ ${w.q}<br>解説：${w.e}</p>`;
     });
+    html += `</div>`;
   }
-
   container.innerHTML = html;
 }
 
-/* ===== 再学習 ===== */
-function retry(){
-  questions = [...wrongList];
-  wrongList = [];
-  current = 0;
-  score = 0;
-  retryMode = true;
-  showQuestion();
-}
-
-/* ===== 開始 ===== */
 showQuestion();
 </script>
 
