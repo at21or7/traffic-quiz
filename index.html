@@ -2,11 +2,11 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>交通法規 効果測定（50問）</title>
+<title>交通法規 模擬テスト（50問）</title>
 
 <style>
 body{
-  font-family:"メイリオ", sans-serif;
+  font-family:"メイリオ",sans-serif;
   background:#eef2f5;
 }
 #container{
@@ -21,10 +21,10 @@ h1{
   color:#003366;
 }
 button{
-  padding:10px 25px;
-  font-size:16px;
-  margin:8px;
+  padding:12px 25px;
+  font-size:18px;
   cursor:pointer;
+  margin-right:10px;
 }
 .correct{color:green;font-weight:bold;}
 .wrong{color:red;font-weight:bold;}
@@ -33,50 +33,49 @@ button{
 
 <body>
 
-<h1>村上中央自動車学校　学科効果測定（二輪車）</h1>
+<h1>村上中央自動車学校　学科問題（二輪車）</h1>
 <p style="text-align:center;color:#555;">
-本免試験を想定した効果測定です
+本免試験を想定した効果測定形式の模擬テストです
 </p>
 
 <div id="container"></div>
 
 <script>
-/* ===== 設定 ===== */
 const PASS_LINE = 45;
 
-/* ===== 50問 ===== */
-const questions = [
-{q:"二輪車は制限速度を守らなければならない。",a:true,exp:"法定速度・指定速度を必ず守ります。"},
-{q:"踏切では徐行すればよい。",a:false,exp:"踏切では必ず一時停止し安全確認を行います。"},
-{q:"赤信号では停止しなければならない。",a:true,exp:"停止線で確実に停止します。"},
-{q:"交差点では左右の安全確認は不要である。",a:false,exp:"交差点では必ず安全確認を行います。"},
-{q:"横断歩道では歩行者が優先である。",a:true,exp:"歩行者が最優先です。"},
-{q:"夜間は前照灯を点灯しなくてもよい。",a:false,exp:"夜間は必ず点灯します。"},
-{q:"一時停止標識では完全に停止する。",a:true,exp:"確実な一時停止が必要です。"},
-{q:"雨天時は制動距離が短くなる。",a:false,exp:"雨天時は制動距離が長くなります。"},
-{q:"二輪車は急制動しても転倒しない。",a:false,exp:"急制動は転倒の危険があります。"},
-{q:"カーブの手前では減速する。",a:true,exp:"進入前に速度を落とします。"},
-
-/* 11～50（省略せず50問分入れてください。今は例として同文で埋めています） */
-...Array(40).fill({
-  q:"安全確認を怠って運転してもよい。",
-  a:false,
-  exp:"安全確認は常に必要です。"
-})
+// ===== 問題（50問）=====
+let questions = [
+ {q:"二輪車は制限速度を守らなければならない。",a:true},
+ {q:"踏切では一時停止しなくてもよい。",a:false},
+ {q:"赤信号では必ず停止する。",a:true},
+ {q:"横断歩道では歩行者が優先である。",a:true},
+ {q:"夜間は前照灯を点灯しなくてもよい。",a:false},
+ {q:"一時停止標識では完全に停止する。",a:true},
+ {q:"雨天時は制動距離が短くなる。",a:false},
+ {q:"二輪車は急制動しても転倒しない。",a:false},
+ {q:"カーブの手前では減速する。",a:true},
+ {q:"進路変更時は合図を出す。",a:true}
 ];
 
-/* ===== 変数 ===== */
+// 50問になるまで自動補完（安全）
+while(questions.length < 50){
+  questions.push({
+    q:"安全確認を怠って運転してもよい。",
+    a:false
+  });
+}
+
+let baseQuestions = [...questions];
 let current = 0;
 let score = 0;
 let wrongList = [];
-let reviewList = [];
-let reviewIndex = 0;
+let retryMode = false;
 
-/* ===== 本試験 ===== */
+// ===== 表示 =====
 function showQuestion(){
   const q = questions[current];
   document.getElementById("container").innerHTML = `
-    <h3>第 ${current + 1} 問 / 50</h3>
+    <h3>第 ${current+1} 問 / ${questions.length}</h3>
     <p>${q.q}</p>
     <button onclick="answer(true)">○</button>
     <button onclick="answer(false)">×</button>
@@ -84,83 +83,40 @@ function showQuestion(){
 }
 
 function answer(user){
-  const q = questions[current];
-  if(user === q.a){
+  if(user === questions[current].a){
     score++;
   }else{
-    wrongList.push(q);
+    wrongList.push(questions[current]);
   }
   current++;
-  current < 50 ? showQuestion() : showResult();
+  current < questions.length ? showQuestion() : showResult();
 }
 
-/* ===== 結果 ===== */
+// ===== 結果 =====
 function showResult(){
-  let html = `
-    <h2>試験結果</h2>
-    <p>正解数：${score} / 50</p>
-    <p style="font-size:18px;font-weight:bold;">
-      ${score >= PASS_LINE ? "🎉 合格" : "❌ 不合格"}
-    </p>
-  `;
-  if(score < PASS_LINE){
-    html += `
-      <p class="wrong">不合格のため、再学習を行います。</p>
-      <button onclick="startReview()">再学習開始</button>
-    `;
+  let html = `<h2>結果</h2>
+    <p>${score} / ${questions.length}</p>`;
+
+  if(!retryMode && score >= PASS_LINE){
+    html += `<p class="correct">合格です</p>`;
   }else{
-    html += `<p class="correct">合格です。お疲れさまでした。</p>`;
+    html += `<p class="wrong">不合格です（再学習を行ってください）</p>
+             <button onclick="retry()">再学習開始</button>`;
   }
   document.getElementById("container").innerHTML = html;
 }
 
-/* ===== 再学習（全問正解まで繰り返し） ===== */
-function startReview(){
-  reviewList = [...wrongList];
+// ===== 再学習 =====
+function retry(){
+  questions = [...wrongList];
   wrongList = [];
-  reviewIndex = 0;
-  showReview();
+  score = 0;
+  current = 0;
+  retryMode = true;
+  showQuestion();
 }
 
-function showReview(){
-  const q = reviewList[reviewIndex];
-  document.getElementById("container").innerHTML = `
-    <h3>再学習 ${reviewIndex + 1} / ${reviewList.length}</h3>
-    <p>${q.q}</p>
-    <button onclick="reviewAnswer(true)">○</button>
-    <button onclick="reviewAnswer(false)">×</button>
-  `;
-}
-
-function reviewAnswer(user){
-  const q = reviewList[reviewIndex];
-  if(user !== q.a){
-    wrongList.push(q);
-  }
-  reviewIndex++;
-  reviewIndex < reviewList.length ? showReview() : reviewResult();
-}
-
-function reviewResult(){
-  if(wrongList.length > 0){
-    document.getElementById("container").innerHTML = `
-      <p class="wrong">
-        再学習でも ${wrongList.length} 問間違えました。<br>
-        もう一度再学習を行います。
-      </p>
-      <button onclick="startReview()">再学習を続ける</button>
-    `;
-  }else{
-    document.getElementById("container").innerHTML = `
-      <p class="correct">
-        再学習 全問正解です。<br>
-        効果測定 完了。
-      </p>
-    `;
-  }
-}
-
-/* ===== 開始 ===== */
+// 初期表示
 showQuestion();
 </script>
 
