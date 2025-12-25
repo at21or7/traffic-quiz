@@ -125,8 +125,12 @@ function answer(val){
   if(val === q.a){
     score++;
   }else{
-    wrongList.push({q:q.q,e:q.e});
-  }
+    wrongList.push({
+  no: current + 1,
+  q: q.q,
+  e: q.e
+});
+
   current++;
   current < questions.length ? showQuestion() : showResult();
 }
@@ -149,9 +153,7 @@ function showResult(){
   `;
 });
 
-
-    });
-    html += `</div>`;
+       html += `</div>`;
   }
   container.innerHTML = html;
 }
@@ -161,6 +163,7 @@ showQuestion();
 
 </body>
 </html>
+
 
 
 
