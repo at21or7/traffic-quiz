@@ -140,7 +140,15 @@ function showResult(){
   if(wrongList.length){
     html += `<div class="review"><h3>復習</h3>`;
     wrongList.forEach(w=>{
-      html += `<p> ${w.q}<br><span class="kaisetsu">解説：</span>${w.e}</p>`;
+  html += `
+    <p>
+      【第 ${w.no} 問】<br>
+      ${w.q}<br>
+      <span class="kaisetsu">解説：</span>${w.e}
+    </p>
+  `;
+});
+
 
     });
     html += `</div>`;
@@ -153,6 +161,7 @@ showQuestion();
 
 </body>
 </html>
+
 
 
 
