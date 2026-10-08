@@ -145,6 +145,7 @@ const PASS_LINE = 47;
 let current = 0;
 let score = 0;
 let wrongList = [];
+let isRetryMode = false; // 誤答再テスト中かどうかを明示的に管理
 
 const questions = [
 {"q":"二輪車のブレーキのかけ方には、ブレーキレバー、ブレーキペダル、エンジンブレーキの3種類がある。","a":true,"e":"問題文の通りです。"},
@@ -233,7 +234,7 @@ function answer(val){
 }
 
 function showResult(){
-  const isFullTest = questions.length === questionsMaster.length;
+  const isFullTest = !isRetryMode && questions.length === questionsMaster.length;
   const passLine = isFullTest ? PASS_LINE : questions.length;
 
   // 50問を最後まで解答した場合のみ送信（誤答再テストは対象外）
@@ -316,6 +317,7 @@ function retryWrong(){
   current = 0;
   score = 0;
   wrongList = [];
+  isRetryMode = true;
 
   showQuestion();
 }
@@ -327,6 +329,7 @@ function restartAll(){
   current = 0;
   score = 0;
   wrongList = [];
+  isRetryMode = false;
 
   showQuestion();
 }
